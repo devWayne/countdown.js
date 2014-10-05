@@ -4,11 +4,13 @@
 
 	}
 
+	var handle;
+
 	var proto=countdown.prototype;
 
 	proto.constructor=countdown;
 
-	proto.convert(time){
+	proto.convert=function(time){
 		var result=[];
 		var dayTime=1000*60*60*24,
 			hourTime=1000*60*60,
@@ -27,6 +29,22 @@
 		return result;
 	}
 
+	proto.start=function(){
+		var $countdown=this.children();
+		setTimeInterval(function(){
+			var _date=new Date();
+			var _arr=proto.convert(_date.getTime());
+			$countdown.eq(0).text=_arr[0];
+			$countdown.eq(1).text=_arr[1];
+			$countdown.eq(2).text=_arr[2];
+			$countdown.eq(3).text=_arr[3];
+		})
+	}
+
+	proto.stop=function(){
+		handle.clearInterval();
+		return;
+	}
 
 	
 })($)
