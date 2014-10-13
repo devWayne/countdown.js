@@ -1,50 +1,55 @@
-(function($){
+var countdown = function() {
+
+}
+
+var handle;
+
+var proto = countdown.prototype;
+
+proto.constructor = countdown;
+
+
+proto.convertDate = function(date) {
+	var result = [];
+	if (typeof date == "object") {
+		date = date.toString();
+	}
+	result = date.match(/\d{2}:\d{2}:\d{2}/).toString().split(":");
+	return result;
+}
+
+proto.start = function(time,callback) {
+	//	var $countdown = this.children();
+		if (!time) return;
+		if (true) {
+			var _arr = this.convertDate(time);
+			handle = setInterval(function() {
+				_now = new Date();
+				_arrnow = proto.convertDate(_now);
+				_h = (parseInt(_arr[0]) - parseInt(_arrnow[0])) - 1;
+				_m = 60 - (parseInt(_arrnow[1]) - parseInt(_arr[1]));
+				_s = 60 - (parseInt(_arrnow[2]) - parseInt(_arr[2]));
+				$('.transfer-hour').text(_h.toString());
+				$('.transfer-minute').text(_m.toString());
+				$('.transfer-second').text(_s.toString());
+				if(_h===0 && _m===0 && _s===0){
+					clearInterval(handle);
+					if (callback && (callback instanceof Function)) {
+							callback();
+						}
+				}
+			}, 1000)
+		} else {
+
+		}
+
+}
+
+proto.stop = function() {
+	clearInterval(handle);
+	return;
+}
+
+proto.checkTime=function(){
 	
-	var countdown=function(){
-
-	}
-
-	var handle;
-
-	var proto=countdown.prototype;
-
-	proto.constructor=countdown;
-
-	proto.convert=function(time){
-		var result=[];
-		var dayTime=1000*60*60*24,
-			hourTime=1000*60*60,
-			minuteTime=1000*60,
-			secondTime=1000;
-
-		var day=Math.floor(time/dayTime);
-		var	hour=Math.floor((time-day*dayTime)/hourTime);
-		var minute=Math.floor((time-day*dayTime-hour*hourTime)/minuteTime);
-		var second=Math.floor((time-day*dayTime-hour*hourTime-minute*minuteTime)/secondTime);
-		console.log('day:'+day+'hour:'+hour+'minute:'+minute+'second:'+second);
-		result.push(second);
-		result.push(minute);
-		result.push(hour);
-		result.push(day);
-		return result;
-	}
-
-	proto.start=function(){
-		var $countdown=this.children();
-		setTimeInterval(function(){
-			var _date=new Date();
-			var _arr=proto.convert(_date.getTime());
-			$countdown.eq(0).text=_arr[0];
-			$countdown.eq(1).text=_arr[1];
-			$countdown.eq(2).text=_arr[2];
-			$countdown.eq(3).text=_arr[3];
-		})
-	}
-
-	proto.stop=function(){
-		handle.clearInterval();
-		return;
-	}
-
-	
-})($)
+}
