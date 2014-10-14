@@ -1,7 +1,9 @@
-var countdown = function() {
+var countdown = function(option) {
 	this.hT = 60 * 60 * 1000;
 	this.mT = 60 * 1000;
 	this.sT = 1000;
+
+	option&&this.init(option);
 }
 
 
@@ -9,6 +11,11 @@ var proto = countdown.prototype;
 
 proto.constructor = countdown;
 
+
+proto.init=function(option){
+
+
+}
 
 proto.convertDate = function(date) {
 	var result = [];
@@ -29,6 +36,8 @@ proto.start = function(date, callback) {
 	var time = date.getTime();
 	if (new Date().getTime() < time) {
 
+		var _this = this;
+
 		function getHMS() {
 			_now = new Date().getTime();
 			delta = time - _now;
@@ -42,15 +51,19 @@ proto.start = function(date, callback) {
 			}
 
 
-			$('.transfer-hour').text(_h.toString());
-			$('.transfer-minute').text(_m.toString());
-			$('.transfer-second').text(_s.toString());
+			$('.transfer-hour').text(fix(_h.toString()));
+			$('.transfer-minute').text(fix(_m.toString()));
+			$('.transfer-second').text(fix(_s.toString()));
 			if (_h === 0 && _m === 0 && _s === 0) {
 				clearInterval(handle);
 				if (callback && (callback instanceof Function)) {
 					callback();
 				}
 			}
+
+			this.handle = setTimeout(function() {
+				getHMS.apply(_this)
+			}, 1000)
 		}
 
 		function _div(exp1, exp2) {
@@ -68,11 +81,15 @@ proto.start = function(date, callback) {
 			return rslt;
 		}
 
-		_this = this;
+		function fix(n){
+			if(parseInt(n)<10){
+				n="0"+n;
+			}
+			return n;
+		}
 
-		this.handle = setInterval(function() {
-			getHMS.apply(_this)
-		}, 1000)
+		getHMS();
+
 	} else {
 
 	}
@@ -89,3 +106,7 @@ proto.stop = function() {
 proto.checkTime = function() {
 
 }
+
+if (typeof exports !== 'undefined' && module.exports) {
+    module.exports = exports = countdown;
+} 
