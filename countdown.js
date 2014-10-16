@@ -3,7 +3,7 @@ var countdown = function(option) {
 	this.mT = 60 * 1000;
 	this.sT = 1000;
 
-	option&&this.init(option);
+	option && this.init(option);
 }
 
 
@@ -12,7 +12,7 @@ var proto = countdown.prototype;
 proto.constructor = countdown;
 
 
-proto.init=function(option){
+proto.init = function(option) {
 
 
 }
@@ -40,7 +40,7 @@ proto.start = function(date, callback) {
 
 		function getHMS() {
 			_now = new Date().getTime();
-			delta = time - _now;
+			var delta = time - _now;
 
 			if (delta > 24 * 60 * 60 * 1000) {
 				return;
@@ -66,34 +66,55 @@ proto.start = function(date, callback) {
 			}, 1000)
 		}
 
-		function _div(exp1, exp2) {
-			var n1 = Math.round(exp1); //四舍五入   
-			var n2 = Math.round(exp2); //四舍五入  
 
-			var rslt = n1 / n2; //除  
 
-			if (rslt >= 0) {
-				rslt = Math.floor(rslt); //返回小于等于原rslt的最大整数。   
-			} else {
-				rslt = Math.ceil(rslt); //返回大于等于原rslt的最小整数。   
-			}
-
-			return rslt;
-		}
-
-		function fix(n){
-			if(parseInt(n)<10){
-				n="0"+n;
-			}
-			return n;
-		}
-
-		getHMS();
+		getHMS.apply(_this);
 
 	} else {
 
 	}
 
+
+
+}
+
+proto.count = function(startDate, endDate, callback) {
+	var _h, _m, _s;
+	if ($.isFunction(endDate)) callback = endDate;
+	var _start = startDate.getTime(),
+		_end = endDate.getTime();
+	var _this = this;
+
+	function getHMS() {
+		if (endDate > startDate) {
+
+			var delta = _end - _start;
+		} else {
+			var delta = _start - _end;
+		}
+		if (delta > 24 * 60 * 60 * 1000) {
+			return;
+		} else {
+			_h = _div(delta, this.hT);
+			_m = _div((delta - _h * this.hT), this.mT);
+			_s = _div((delta - _h * this.hT - _m * this.mT), this.sT);
+		}
+		this.handle = setTimeout(function() {
+			getHMS.apply(_this);
+			_start = _start + 1000;
+		}, 1000)
+
+		$('.transfer-hour').text(fix(_h.toString()));
+		$('.transfer-minute').text(fix(_m.toString()));
+		$('.transfer-second').text(fix(_s.toString()));
+		if (_h === 0 && _m === 0 && _s === 0) {
+			clearInterval(handle);
+			if (callback && (callback instanceof Function)) {
+				callback();
+			}
+		}
+	}
+	getHMS.apply(_this);
 
 
 }
@@ -107,6 +128,28 @@ proto.checkTime = function() {
 
 }
 
+function _div(exp1, exp2) {
+	var n1 = Math.round(exp1); //四舍五入   
+	var n2 = Math.round(exp2); //四舍五入  
+
+	var rslt = n1 / n2; //除  
+
+	if (rslt >= 0) {
+		rslt = Math.floor(rslt); //返回小于等于原rslt的最大整数。   
+	} else {
+		rslt = Math.ceil(rslt); //返回大于等于原rslt的最小整数。   
+	}
+
+	return rslt;
+}
+
+function fix(n) {
+	if (parseInt(n) < 10) {
+		n = "0" + n;
+	}
+	return n;
+}
+
 if (typeof exports !== 'undefined' && module.exports) {
-    module.exports = exports = countdown;
-} 
+	module.exports = exports = countdown;
+}
